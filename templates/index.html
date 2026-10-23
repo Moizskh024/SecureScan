@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <meta name="description" content="SecureScan educational URL and security header analyzer.">
+    <title>SecureScan — Security Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+<main class="container">
+    <header class="page-header">
+        <div class="logo">SecureScan</div>
+        <h1>Your security journey starts here.</h1>
+        <p class="description">
+            Validate URLs, assess destinations, and analyze HTTP security headers.
+        </p>
+        <div class="status">
+            <span class="status-dot" aria-hidden="true"></span>
+            Local application running
+        </div>
+    </header>
+
+    <section class="tool-card">
+        <div class="section-eyebrow">01 / URL CHECK</div>
+        <h2>Validate a URL</h2>
+        <p class="section-description">
+            Check URL formatting, hostname, and protocol.
+        </p>
+
+        <form id="validate-form">
+            <label for="url">Website URL</label>
+            <div class="input-row">
+                <input id="url" name="url" type="text"
+                       placeholder="https://example.com"
+                       autocomplete="url" maxlength="2048" required>
+                <button type="submit" id="validate-button">Validate URL</button>
+            </div>
+            <p class="helper">URL format validation only; no website connection is made.</p>
+        </form>
+
+        <section id="results" class="results" aria-live="polite" hidden>
+            <h3 id="result-title">Validation result</h3>
+            <p id="result-message"></p>
+            <dl id="result-details" class="details" hidden>
+                <div><dt>Hostname</dt><dd id="result-hostname"></dd></div>
+                <div><dt>Protocol</dt><dd id="result-scheme"></dd></div>
+                <div><dt>HTTPS URL</dt><dd id="result-https"></dd></div>
+            </dl>
+        </section>
+    </section>
+
+    <section class="tool-card">
+        <div class="section-eyebrow">02 / DESTINATION CHECK</div>
+        <h2>Run preflight assessment</h2>
+        <p class="section-description">
+            Resolve the hostname and check returned addresses against the destination policy.
+        </p>
+        <button type="button" id="preflight-button" class="secondary-button">
+            Run Preflight
+        </button>
+        <p class="helper">
+            DNS resolution may contact DNS infrastructure. No HTTP request is made to the target.
+        </p>
+
+        <section id="preflight-results" class="results" aria-live="polite" hidden>
+            <h3 id="preflight-title">Preflight result</h3>
+            <p id="preflight-message"></p>
+            <dl id="preflight-details" class="details" hidden>
+                <div><dt>Hostname</dt><dd id="preflight-hostname"></dd></div>
+                <div><dt>Protocol</dt><dd id="preflight-scheme"></dd></div>
+                <div><dt>HTTPS URL</dt><dd id="preflight-https"></dd></div>
+                <div><dt>IP addresses</dt><dd id="preflight-addresses"></dd></div>
+            </dl>
+        </section>
+    </section>
+
+    <section class="tool-card">
+        <div class="section-eyebrow">03 / HEADER CHECK</div>
+        <h2>Security Header Analyzer</h2>
+        <p class="section-description">
+            Analyze manually supplied response headers. No target website is contacted.
+        </p>
+
+        <div class="sample-actions">
+            <button type="button" id="sample-headers-button" class="secondary-button">
+                Load Sample Headers
+            </button>
+            <button type="button" id="clear-headers-button" class="text-button">
+                Clear
+            </button>
+        </div>
+
+        <label for="headers-input">HTTP response headers (JSON)</label>
+        <textarea id="headers-input" rows="10" spellcheck="false"
+                  autocapitalize="off" autocomplete="off"
+                  placeholder='{
+  "Content-Security-Policy": "default-src &#39;self&#39;",
+  "X-Content-Type-Options": "nosniff"
+}'></textarea>
+        <p class="helper">
+            Enter a JSON object containing header names and string values.
+        </p>
+        <button type="button" id="analyze-headers-button">Analyze Headers</button>
+
+        <section id="header-results" class="results" aria-live="polite" hidden>
+            <h3 id="header-result-title">Security header report</h3>
+            <p id="header-result-message"></p>
+
+            <div id="header-score-panel" class="score-panel" hidden>
+                <div class="score-ring">
+                    <span id="header-score-value">0</span><span class="score-percent">%</span>
+                </div>
+                <div class="score-copy">
+                    <h4 id="header-score-label">Security Header Coverage</h4>
+                    <p id="header-score-method"></p>
+                </div>
+            </div>
+
+            <button type="button" id="download-report-button"
+                    class="secondary-button download-button" hidden>
+                Download JSON Report
+            </button>
+
+            <div id="header-summary" class="summary-grid" hidden>
+                <div class="summary-item"><span>Present</span><strong id="header-count-present">0</strong></div>
+                <div class="summary-item"><span>Missing</span><strong id="header-count-missing">0</strong></div>
+                <div class="summary-item"><span>Review</span><strong id="header-count-review">0</strong></div>
+                <div class="summary-item"><span>Total</span><strong id="header-count-total">0</strong></div>
+            </div>
+
+            <div id="header-findings" class="findings-list"></div>
+        </section>
+    </section>
+
+    <footer class="page-footer">
+        <p class="disclaimer">
+            Educational use only. Preflight is not a guarantee of safety.
+            Header analysis covers only supplied data and does not measure overall website security.
+        </p>
+    </footer>
+</main>
+</body>
+</html>
